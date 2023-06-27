@@ -11,7 +11,9 @@ let winner;
 const mainSection = document.querySelector('main');
 const boardSection = document.getElementById('board');
 const playAgainBtn = document.getElementById('play-again');
-
+const gameStatusMsg = document.createElement('h2');
+gameStatusMsg.setAttribute('id', 'game-status');
+mainSection.prepend(gameStatusMsg);
 
 /*----- functions -----*/
 
@@ -53,6 +55,20 @@ const renderPlayAgain = () => {
     winner ? playAgainBtn.style.visibility = 'visible' : playAgainBtn.style.visibility = 'hidden';
 }
 
+const renderStatusMsg = () => {
+    let msg = '';
+    if (board.flat().every(val => val === null)) {
+        msg = `${PLAYER1} goes first!`;
+    } else if (board.flat().every(val => val !== null)) {
+        if (winner) {
+            msg = `${playerTurn} Wins!`;
+        } else {
+            msg = `The game was a tie!`;
+        }
+    }
+    gameStatusMsg.innerHTML = msg;
+}
+
 const renderBoard = () => {
     boardSection.innerHTML = '';
     board.forEach((row, rowIdx) => {
@@ -69,9 +85,12 @@ const renderBoard = () => {
 const render = () => {
     renderBoard();
     renderPlayAgain();
+    renderStatusMsg();
 }
 
 const handleClick = ({target}) => {
+    // dont allow turns if already game over
+    if (winner) return;
     // shorthand variables
     const rowIdx = target.id.split("-")[0];
     const colIdx = target.id.split("-")[1];
@@ -84,7 +103,7 @@ const handleClick = ({target}) => {
 
     // check if winner
     winner = checkWinner(rowIdx, colIdx);
-
+    
     console.log(winner);
     
     // switch players
@@ -104,6 +123,9 @@ const init = () => {
     playerTurn = PLAYER1;
     winner = false;
 
+    // add the board event listener
+    boardSection.addEventListener("click", handleClick);
+
     render();
 }
 
@@ -111,7 +133,7 @@ const init = () => {
 init();
 
 /*----- event listeners -----*/
-boardSection.addEventListener("click", handleClick);
+
 playAgainBtn.addEventListener("click", init);
 
 
