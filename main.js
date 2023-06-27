@@ -8,7 +8,10 @@ let playerTurn;
 let winner;
 
 /*----- cached elements  -----*/
+const mainSection = document.querySelector('main');
 const boardSection = document.getElementById('board');
+const playAgainBtn = document.getElementById('play-again');
+
 
 /*----- functions -----*/
 
@@ -46,6 +49,9 @@ const checkWinner = (rowIdx, colIdx) => {
         checkDiagonalWinUp(rowIdx, colIdx);
 }
 
+const renderPlayAgain = () => {
+    winner ? playAgainBtn.style.visibility = 'visible' : playAgainBtn.style.visibility = 'hidden';
+}
 
 const renderBoard = () => {
     boardSection.innerHTML = '';
@@ -62,6 +68,7 @@ const renderBoard = () => {
 
 const render = () => {
     renderBoard();
+    renderPlayAgain();
 }
 
 const handleClick = ({target}) => {
@@ -74,7 +81,7 @@ const handleClick = ({target}) => {
     if (board[rowIdx][colIdx] !== null) return;
     // update board data
     board[rowIdx][colIdx] = playerTurn;
-    
+
     // check if winner
     winner = checkWinner(rowIdx, colIdx);
 
@@ -105,6 +112,7 @@ init();
 
 /*----- event listeners -----*/
 boardSection.addEventListener("click", handleClick);
+playAgainBtn.addEventListener("click", init);
 
 
 
