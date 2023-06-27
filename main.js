@@ -4,8 +4,8 @@ const PLAYER2 = 'O';
 
 /*----- state variables -----*/
 let board;
-let playerTurn;
-let winner;
+let currentPlayer;
+let gameStatus; // 1 for player 1's turn, 2 for player 2's turn, 0 for game ends in draw, -1 for player 1 wins, -2 for player 2 wins
 
 /*----- cached elements  -----*/
 const mainSection = document.querySelector('main');
@@ -16,6 +16,8 @@ gameStatusMsg.setAttribute('id', 'game-status');
 mainSection.prepend(gameStatusMsg);
 
 /*----- functions -----*/
+
+    /*--- Check win functions ---*/
 
 const checkDiagonalWinUp = (rowIdx, colIdx) => {
     // create array of containing diagonal upward from 0,2 values
@@ -50,22 +52,31 @@ const checkWinner = (rowIdx, colIdx) => {
         checkDiagonalWinDown(rowIdx, colIdx) || 
         checkDiagonalWinUp(rowIdx, colIdx);
 }
+    /*--- check win functions ---*/
 
 const renderPlayAgain = () => {
-    winner ? playAgainBtn.style.visibility = 'visible' : playAgainBtn.style.visibility = 'hidden';
+    gameStatus < 1 ? playAgainBtn.style.visibility = 'visible' : playAgainBtn.style.visibility = 'hidden';
 }
 
 const renderStatusMsg = () => {
     let msg = '';
-    if (board.flat().every(val => val === null)) {
-        msg = `${PLAYER1} goes first!`;
-    } else if (board.flat().every(val => val !== null)) {
-        if (winner) {
-            msg = `${playerTurn} Wins!`;
+    // if game over
+    if (gameStatus <= 0) {
+        if (gameStatus === -1) {
+            msg = `player 1 wins`
+        } else if (gameStatus === -2) {
+            msg = `player 2 wins`
         } else {
-            msg = `The game was a tie!`;
+            msg = `game was a draw`
+        }
+    } else {
+        if (gameStatus === 1) {
+            msg = `player 1 go`
+        } else {
+            msg = `player 2 go`
         }
     }
+
     gameStatusMsg.innerHTML = msg;
 }
 
@@ -86,6 +97,35 @@ const render = () => {
     renderBoard();
     renderPlayAgain();
     renderStatusMsg();
+    console.log(`game status: ${gameStatus}`);
+}
+
+// Logic for updating the game based on turn taken
+const updateGameStatus = (rowIdx, colIdx) => {
+    // 1. Update Board
+    // return out if square taken
+    if (board[rowIdx][colIdx] !== null) return;
+    // Update the board
+    board[rowIdx][colIdx] = currentPlayer;
+
+
+    // 2. Check if winner or tie
+    if (checkWinner(rowIdx, colIdx)) {
+        gameStatus = gameStatus * - 1; // will overwrite draw if board also full
+    } else if (board.flat().every(val => val != null)) { // Or if board is full is a draw
+        gameStatus = 0; // game is draw
+    } 
+
+    // 5. switch players if no winner or draw
+    if (gameStatus > 0) {
+        currentPlayer = currentPlayer === PLAYER1 ? PLAYER2 : PLAYER1;
+        if (gameStatus > 1) {
+            gameStatus = 1;
+        } else {
+            gameStatus = 2;
+        }
+    }
+    
 }
 
 const handleClick = ({target}) => {
@@ -95,19 +135,8 @@ const handleClick = ({target}) => {
     const rowIdx = target.id.split("-")[0];
     const colIdx = target.id.split("-")[1];
 
-    // update board data
-    // if cell already taken exit:
-    if (board[rowIdx][colIdx] !== null) return;
-    // update board data
-    board[rowIdx][colIdx] = playerTurn;
-
-    // check if winner
-    winner = checkWinner(rowIdx, colIdx);
-    
-    console.log(winner);
-    
-    // switch players
-    playerTurn = playerTurn === PLAYER1 ? PLAYER2 : PLAYER1;
+    // call update game status
+    updateGameStatus(rowIdx, colIdx);
     
     // re-render
     render();
@@ -120,11 +149,11 @@ const init = () => {
         [null, null, null],
     ];
 
-    playerTurn = PLAYER1;
+    currentPlayer = PLAYER1;
     winner = false;
+    gameStatus = 1;
 
-    // add the board event listener
-    boardSection.addEventListener("click", handleClick);
+    
 
     render();
 }
@@ -133,7 +162,8 @@ const init = () => {
 init();
 
 /*----- event listeners -----*/
-
+// add the board event listener
+boardSection.addEventListener("click", handleClick);
 playAgainBtn.addEventListener("click", init);
 
 

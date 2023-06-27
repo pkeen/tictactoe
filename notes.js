@@ -4,9 +4,29 @@ let currentPlayer = 1; // 1 or -1?
 
 let winningSquares = // array of three winning squares;
 
-let gameStatus = // 0 for tie, 1 for player 1, -1 for player 2 wins
+
+
 
 // game status object?
+
+const gameState = {
+    currentPlayer: 1;
+    board: [
+        [null, null, null]
+    ]
+}
+
+/* Update game status function 
+
+1. update board with player turn
+2. check if winner
+    - update winner
+3. check if board full up
+    
+4. update status with 1, 2, 0, -1, -2;
+5. if no winner or draw switch player turn
+
+let gameStatus = // 1 for player 1's turn, 2 for player 2's turn, 0 for tie, -1 for player 1 wins, -2 for player 2 wins
 
 
 /*------ Determining Winner  -------*/
