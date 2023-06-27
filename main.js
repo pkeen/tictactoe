@@ -61,18 +61,6 @@ const renderPlayAgain = () => {
 
 const renderStatusMsg = () => {
     let msg = '';
-    // if game over
-    // if (gameStatus <= 0) {
-    //     if (gameStatus === -1) {
-    //         msg = `${players[gameStatus*-1]} wins`
-    //     } else if (gameStatus === -2) {
-    //         msg = `${players[gameStatus*-1]} 2 wins`
-    //     } else {
-    //         msg = `game was a draw`
-    //     }
-    // } else {
-    //     msg = `${players[gameStatus]}'s Turn...`
-    // }
 
     if (gameStatus !== 0) {
         gameStatus > 0 ? msg = `${players[gameStatus]}'s Turn...` : msg = `${players[gameStatus*-1]} Wins!`
@@ -150,7 +138,7 @@ const init = () => {
         [null, null, null],
         [null, null, null],
     ];
-    
+
     winner = false;
     gameStatus = 1;
 
