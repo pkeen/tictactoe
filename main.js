@@ -46,30 +46,6 @@ const checkWinner = (rowIdx, colIdx) => {
         checkDiagonalWinUp(rowIdx, colIdx);
 }
 
-const handleClick = ({target}) => {
-    // shorthand var
-    // const idSplit = target.id.split("-");
-    // const cellPos = {
-    //     [idSplit[0][0]]: idSplit[0][1],
-    //     [idSplit[1][0]]: idSplit[1][1]
-    // }
-    const rowIdx = target.id.split("-")[0];
-    const colIdx = target.id.split("-")[1];
-
-    // update board data
-    board[rowIdx][colIdx] = playerTurn;
-    // check if winner
-    winner = checkWinner(rowIdx, colIdx);
-
-    console.log(winner);
-    
-    // switch players
-    playerTurn = playerTurn === PLAYER1 ? PLAYER2 : PLAYER1;
-    
-    // re-render
-    render();
-
-}
 
 const renderBoard = () => {
     boardSection.innerHTML = '';
@@ -86,6 +62,29 @@ const renderBoard = () => {
 
 const render = () => {
     renderBoard();
+}
+
+const handleClick = ({target}) => {
+    // shorthand variables
+    const rowIdx = target.id.split("-")[0];
+    const colIdx = target.id.split("-")[1];
+
+    // update board data
+    // if cell already taken exit:
+    if (board[rowIdx][colIdx] !== null) return;
+    // update board data
+    board[rowIdx][colIdx] = playerTurn;
+    
+    // check if winner
+    winner = checkWinner(rowIdx, colIdx);
+
+    console.log(winner);
+    
+    // switch players
+    playerTurn = playerTurn === PLAYER1 ? PLAYER2 : PLAYER1;
+    
+    // re-render
+    render();
 }
 
 const init = () => {
@@ -105,7 +104,7 @@ const init = () => {
 init();
 
 /*----- event listeners -----*/
-boardSection.addEventListener("click", handleClick)
+boardSection.addEventListener("click", handleClick);
 
 
 
