@@ -1,10 +1,11 @@
 /*----- constants -----*/
-const PLAYER1 = 'X';
-const PLAYER2 = 'O';
+const players = {
+    1: 'X',
+    2: '0'
+}
 
 /*----- state variables -----*/
 let board;
-let currentPlayer;
 let gameStatus; // 1 for player 1's turn, 2 for player 2's turn, 0 for game ends in draw, -1 for player 1 wins, -2 for player 2 wins
 
 /*----- cached elements  -----*/
@@ -61,20 +62,22 @@ const renderPlayAgain = () => {
 const renderStatusMsg = () => {
     let msg = '';
     // if game over
-    if (gameStatus <= 0) {
-        if (gameStatus === -1) {
-            msg = `player 1 wins`
-        } else if (gameStatus === -2) {
-            msg = `player 2 wins`
-        } else {
-            msg = `game was a draw`
-        }
+    // if (gameStatus <= 0) {
+    //     if (gameStatus === -1) {
+    //         msg = `${players[gameStatus*-1]} wins`
+    //     } else if (gameStatus === -2) {
+    //         msg = `${players[gameStatus*-1]} 2 wins`
+    //     } else {
+    //         msg = `game was a draw`
+    //     }
+    // } else {
+    //     msg = `${players[gameStatus]}'s Turn...`
+    // }
+
+    if (gameStatus !== 0) {
+        gameStatus > 0 ? msg = `${players[gameStatus]}'s Turn...` : msg = `${players[gameStatus*-1]} Wins!`
     } else {
-        if (gameStatus === 1) {
-            msg = `player 1 go`
-        } else {
-            msg = `player 2 go`
-        }
+        msg = `The game was a tie...`;
     }
 
     gameStatusMsg.innerHTML = msg;
@@ -106,7 +109,7 @@ const updateGameStatus = (rowIdx, colIdx) => {
     // return out if square taken
     if (board[rowIdx][colIdx] !== null) return;
     // Update the board
-    board[rowIdx][colIdx] = currentPlayer;
+    board[rowIdx][colIdx] = players[gameStatus];
 
 
     // 2. Check if winner or tie
@@ -118,7 +121,6 @@ const updateGameStatus = (rowIdx, colIdx) => {
 
     // 5. switch players if no winner or draw
     if (gameStatus > 0) {
-        currentPlayer = currentPlayer === PLAYER1 ? PLAYER2 : PLAYER1;
         if (gameStatus > 1) {
             gameStatus = 1;
         } else {
@@ -148,8 +150,7 @@ const init = () => {
         [null, null, null],
         [null, null, null],
     ];
-
-    currentPlayer = PLAYER1;
+    
     winner = false;
     gameStatus = 1;
 
