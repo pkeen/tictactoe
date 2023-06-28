@@ -43,25 +43,48 @@ Flat Board Representation (1d Array)
     Numbers are array indexes. 
 
 Looking at this:
-    a. Numbers that are divisible by 4 with no remainder make up the top-left to bottom-right diagonal
-    b. Numbers that are divisible by 2 with no remainder (excluding 0) make up the bottom-left to top-right diagonal
-    c. We can find out the row by dividing the index by 3 (as an integer value no decimal)
-    d. We can find out the column by looking at the remainder of dividing the index by 3 
+    a. We can find out the column by looking at the remainder of dividing the index by 3 
+    b. We can find out the row by dividing the index by 3 (as an integer value no decimal)
+    c. Numbers that are divisible by 4 with no remainder make up the top-left to bottom-right diagonal
+    d. Numbers that are divisible by 2 with no remainder (excluding 0) make up the bottom-left to top-right diagonal
+    
+To Check for Column Wins
+
+    const column = currentidx % 3 
+        check row of 
+        getColArray = (currentCol) => {
+
+        }
+    }
+    or 
+    const column = [];
+    for (let i = index % 3; i < board.length; i+=3) {
+        column.push(board[i]);
+    } 
+    return column;
+
+    for row //
+    const currentRow = Math.floor(currentIdx / 3);
+        checkRow(currentRow) {
+            return array of row
+        }
+    
+
 
 
 To Check For Diagonal Wins:
 
-    Top-left to bottom-right diagonal:
+    Top-left downward diagonal line (abbreviated to TLD):
 
         if (index % 4 === 0) {
-            // run function checkDiagonalTopLeftDown
+            // run function checkDiagonalTRD
         }
 
         or
 
-        if (!(index % 4)) {
-            // call function checkDiagonalTopLeftDown
-        }
+        const diagTLD = board.filter((val, idx) => !(idx % 4))
+
+        will return an array containing the values from the diagonal
     
     Bottom-left to top-right diagonal
 
@@ -76,24 +99,20 @@ To Check For Diagonal Wins:
     }
 
 
+
+    But ultimately what I wanted to return where not the values contained in the winning line indices, but the indices themselves, 
+    so that I could highlight the winning squares when game is over
     
-To Check for Column Wins
 
-    const column = currentidx % 3 
-        check row of 
-        getColArray = (currentCol) => {
-
-        }
-
-    }
-    for row //
-    const currentRow = Math.floor(currentIdx / 3);
-        checkRow(currentRow) {
-            return array of row
-        }
-
-
-
+So logic for testing :
+    checkForWin(index) 
+        tests if index qualifies for testing against diagonals 
+            check if index falls within diagonals
+                checkIfInDiagonalTLD(index) && getDiagonalTLD
+            if yes tests against diagonals
+        tests column for win
+        tests row for win
+        returns winning array if win || null if no win
 
 */
 

@@ -7,6 +7,7 @@ const players = {
 /*----- state variables -----*/
 let board;
 let gameStatus; // 1 for player 1's turn, 2 for player 2's turn, 0 for game ends in draw, -1 for player 1 wins, -2 for player 2 wins
+let winningSquares;
 
 /*----- cached elements  -----*/
 const mainSection = document.querySelector('main');
@@ -18,42 +19,53 @@ mainSection.prepend(gameStatusMsg);
 
 /*----- functions -----*/
 
-    /*--- Check win functions ---*/
-
-const checkDiagonalWinUp = (rowIdx, colIdx) => {
-    // create array of containing diagonal upward from 0,2 values
-    const diagUpArray = [];
-    for (let i = 0, j = board.length -1; i < board.length; i++, j-- ) {
-        diagUpArray.push(board[i][j])
+// Get indices for current column
+const colIndices = (index) => {
+    return [...Array(3).keys()].map(x => x * 3 + (index % 3));
     }
-    return diagUpArray.every(val => val === board[rowIdx][colIdx]);
+// Get indices for current row
+const rowIndices = (index) => {
+    return [...Array(3).keys()].map(x => x + (Math.floor(index / 3) * 3))
+}
+// get indices for diagonal Top-Left-Down    
+const diagTLDIndices = () => {
+    return [...Array(3).keys()].map(x => x * 4);
+}
+// get incices for diagonal Bottom-Left-Up
+const diagBLUIndices = () => {
+    return [...Array(3).keys()].map(x => x * 2 + 2);
+}
+    
+// Check the values in board corresponding to the indices provided, return true if they all match 
+const lineIsWinner = (indicesToCheck, currentIndex) => {
+    const lineValues = [];
+    indicesToCheck.forEach(i => lineValues.push(board[i]));
+    return lineValues.every(val => val === board[currentIndex]);
 }
 
-const checkDiagonalWinDown = (rowIdx, colIdx) => {
-    // create array containing diagonal downward values from 0,0
-    const diagDownArray = board.map((r, i) => board[i][i]);
-    return diagDownArray.every(val => val === board[rowIdx][colIdx]);
+const getWinningLine = (index) => {
+    // Returns the indices of winning line if there is one
+    
+    // Check current column
+    const col = colIndices(index);
+    if (lineIsWinner(col, index)) return col;
+    
+    // Check current column
+    const row = rowIndices(index);
+    if (lineIsWinner(row, index)) return row;
+    
+    // Check diagonal Top-Left-Downward if meets requirements
+    if (index % 4 === 0) {
+        const diagTL = diagTLDIndices();
+        if (lineIsWinner(diagTL, index)) return diagTL;
+    }
+    
+    // Check diagonal Bottom-Left-Up if meets requirements
+    if (index % 2 === 0 && index < board.length && index > 0) {
+        const diagBL = diagBLUIndices();
+        if (lineIsWinner(diagBL, index)) return diagBL;
+    }
 }
-
-const checkColWin = (rowIdx, colIdx) => {
-    // create a array representing column currently in
-    const colArray = board.map((r, i) => board[i][colIdx]);
-    // every value in colArray equal to current cell value
-    return colArray.every(val => val === board[rowIdx][colIdx])
-}
-
-const checkRowWin = (rowIdx, colIdx) => {
-    // every value in current row is equal to current cell value
-    return board[rowIdx].every(val => val === board[rowIdx][colIdx])
-}
-
-const checkWinner = (rowIdx, colIdx) => {
-    return checkRowWin(rowIdx, colIdx) || 
-        checkColWin(rowIdx, colIdx) || 
-        checkDiagonalWinDown(rowIdx, colIdx) || 
-        checkDiagonalWinUp(rowIdx, colIdx);
-}
-    /*--- check win functions ---*/
 
 const renderPlayAgain = () => {
     gameStatus < 1 ? playAgainBtn.style.visibility = 'visible' : playAgainBtn.style.visibility = 'hidden';
@@ -72,15 +84,15 @@ const renderStatusMsg = () => {
 }
 
 const renderBoard = () => {
+
     boardSection.innerHTML = '';
-    board.forEach((row, rowIdx) => {
-        row.forEach((col, colIdx) => {
-            const cell = document.createElement('div');
-            cell.setAttribute('id', `${rowIdx}-${colIdx}`);
+
+    board.forEach((val, idx) => {
+        const cell = document.createElement('div');
+            cell.setAttribute('id', idx);
             cell.classList.add('cell');
-            cell.innerText = board[rowIdx][colIdx];
+            cell.innerText = val;
             boardSection.append(cell);
-        });
     })
 }
 
@@ -88,24 +100,27 @@ const render = () => {
     renderBoard();
     renderPlayAgain();
     renderStatusMsg();
-    console.log(`game status: ${gameStatus}`);
 }
 
 // Logic for updating the game based on turn taken
-const updateGameStatus = (rowIdx, colIdx) => {
+const updateGameStatus = (idx) => {
     // 1. Update Board
     // return out if square taken
-    if (board[rowIdx][colIdx] !== null) return;
+    if (board[idx] !== null) return;
     // Update the board
-    board[rowIdx][colIdx] = players[gameStatus];
+    board[idx] = players[gameStatus];
 
-
-    // 2. Check if winner or tie
-    if (checkWinner(rowIdx, colIdx)) {
-        gameStatus = gameStatus * - 1; // will overwrite draw if board also full
-    } else if (board.flat().every(val => val != null)) { // Or if board is full is a draw
-        gameStatus = 0; // game is draw
-    } 
+    // 2. Check for winner
+    // a. store winning square indecies in winningSquares if win
+    winningSquares = getWinningLine(idx);
+    //
+    if (winningSquares) {
+        gameStatus = gameStatus * - 1;
+        boardSection.removeEventListener("click", handleClick); // remove event listener
+    } else if (board.every(val => val !== null)) { // or check if tie
+        gameStatus = 0;
+        boardSection.removeEventListener("click", handleClick); // remove event listener
+    }
 
     // 5. switch players if no winner or draw
     if (gameStatus > 0) {
@@ -115,34 +130,24 @@ const updateGameStatus = (rowIdx, colIdx) => {
             gameStatus = 2;
         }
     }
-    
 }
 
 const handleClick = ({target}) => {
-    // dont allow turns if already game over
-    if (winner) return;
-    // shorthand variables
-    const rowIdx = target.id.split("-")[0];
-    const colIdx = target.id.split("-")[1];
-
     // call update game status
-    updateGameStatus(rowIdx, colIdx);
+    updateGameStatus(target.id);
     
     // re-render
     render();
 }
 
 const init = () => {
-    board = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
-    ];
+    board = [null, null, null, null, null, null, null, null, null]; // Hardcoded should change
 
-    winner = false;
+    winningSquares = undefined;
     gameStatus = 1;
 
-    
+    // add the board event listener
+    boardSection.addEventListener("click", handleClick);
 
     render();
 }
@@ -151,10 +156,7 @@ const init = () => {
 init();
 
 /*----- event listeners -----*/
-// add the board event listener
-boardSection.addEventListener("click", handleClick);
 playAgainBtn.addEventListener("click", init);
 
 
 
-// Thinking about this made me order Indian takeaway
