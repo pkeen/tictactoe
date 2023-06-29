@@ -33,3 +33,7 @@ html {
 #play-again {
     margin-top: 5vmin;
 }
+
+.winner {
+    background-color: yellow;
+}

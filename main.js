@@ -38,9 +38,8 @@ const diagBLUIndices = () => {
     
 // Check the values in board corresponding to the indices provided, return true if they all match 
 const lineIsWinner = (indicesToCheck, currentIndex) => {
-    const lineValues = [];
-    indicesToCheck.forEach(i => lineValues.push(board[i]));
-    return lineValues.every(val => val === board[currentIndex]);
+    return board.filter((val, idx) => indicesToCheck.includes(idx))
+      .every(val => val === board[currentIndex]);
 }
 
 const getWinningLine = (index) => {
@@ -92,6 +91,7 @@ const renderBoard = () => {
             cell.setAttribute('id', idx);
             cell.classList.add('cell');
             cell.innerText = val;
+            winningSquares && winningSquares.includes(idx) && cell.classList.add('winner'); // Add highlight to winning squares
             boardSection.append(cell);
     })
 }
@@ -113,7 +113,7 @@ const updateGameStatus = (idx) => {
     // 2. Check for winner
     // a. store winning square indecies in winningSquares if win
     winningSquares = getWinningLine(idx);
-    //
+    // make updates to state and DOM
     if (winningSquares) {
         gameStatus = gameStatus * - 1;
         boardSection.removeEventListener("click", handleClick); // remove event listener
@@ -122,7 +122,7 @@ const updateGameStatus = (idx) => {
         boardSection.removeEventListener("click", handleClick); // remove event listener
     }
 
-    // 5. switch players if no winner or draw
+    // 3. switch players if no winner or draw
     if (gameStatus > 0) {
         if (gameStatus > 1) {
             gameStatus = 1;
@@ -157,6 +157,3 @@ init();
 
 /*----- event listeners -----*/
 playAgainBtn.addEventListener("click", init);
-
-
-
