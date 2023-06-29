@@ -76,3 +76,14 @@ span {
     text-shadow: 2px 2px 9px yellow;
     /* box-shadow: inset 0 0 0 1000px rgba(171, 155, 15,.3); */
 }
+
+#options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#options > h3 {
+    text-align: center;
+}

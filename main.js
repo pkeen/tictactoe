@@ -5,7 +5,7 @@ const players = {
 }
 
 /*----- state variables -----*/
-let boardSize = 4; // hard for now
+let boardSize = 3; // hard for now
 let board;
 let gameStatus; // 1 for player 1's turn, 2 for player 2's turn, 0 for game ends in draw, -1 for player 1 wins, -2 for player 2 wins
 let winningSquares;
@@ -17,6 +17,7 @@ const playAgainBtn = document.getElementById('play-again');
 const gameStatusMsg = document.createElement('h2');
 gameStatusMsg.setAttribute('id', 'game-status');
 mainSection.prepend(gameStatusMsg);
+const sizeForm = document.getElementById('options');
 
 /*----- functions -----*/
 
@@ -49,6 +50,7 @@ const getWinningLine = (index) => {
     
     // Check current column
     const col = colIndices(index);
+    console.log("col: " + col)
     if (lineIsWinner(col, index)) return col;
     
     // Check current column
@@ -84,6 +86,10 @@ const renderStatusMsg = () => {
     gameStatusMsg.innerHTML = msg;
 }
 
+const renderSizeForm = () => {
+    gameStatus < 0 ? sizeForm.style.display = 'none' : sizeForm.style.display = 'block';
+}
+
 const renderBoard = () => {
 
     boardSection.innerHTML = '';
@@ -100,7 +106,7 @@ const renderBoard = () => {
             }
             winningSquares && winningSquares.includes(idx) && cell.classList.add('winner'); // Add highlight to winning squares
             boardSection.append(cell);
-            console.log(board);
+            // console.log(board);
     })
 }
 
@@ -108,6 +114,7 @@ const render = () => {
     renderBoard();
     renderPlayAgain();
     renderStatusMsg();
+    renderSizeForm();
 }
 
 // Logic for updating the game based on turn taken
@@ -148,6 +155,14 @@ const handleClick = ({target}) => {
     render();
 }
 
+const handleSizeChange = ({target}) => {
+    console.log(target.value);
+    // update board size
+    boardSize = parseInt(target.value);
+    // init
+    init();
+}
+
 const init = () => {
     // initalize board with null values
     board = [...Array(boardSize**2)].map(x => null);
@@ -168,3 +183,4 @@ init();
 
 /*----- event listeners -----*/
 playAgainBtn.addEventListener("click", init);
+sizeForm.addEventListener("click", handleSizeChange)
