@@ -90,9 +90,15 @@ const renderBoard = () => {
         const cell = document.createElement('div');
             cell.setAttribute('id', idx);
             cell.classList.add('cell');
-            cell.innerText = val;
+            if (val) cell.innerText = players[val];
+            if (Math.abs(val) === 1) {
+                cell.classList.add('red');
+            } else if (Math.abs(val) === 2) {
+                cell.classList.add('blue');
+            }
             winningSquares && winningSquares.includes(idx) && cell.classList.add('winner'); // Add highlight to winning squares
             boardSection.append(cell);
+            console.log(board);
     })
 }
 
@@ -108,7 +114,7 @@ const updateGameStatus = (idx) => {
     // return out if square taken
     if (board[idx] !== null) return;
     // Update the board
-    board[idx] = players[gameStatus];
+    board[idx] = gameStatus;
 
     // 2. Check for winner
     // a. store winning square indecies in winningSquares if win

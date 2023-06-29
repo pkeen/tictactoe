@@ -1,6 +1,9 @@
 html {
     background-color: grey;
+    box-shadow: none;
 }
+/* fonts */
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
 * {
     box-sizing: border-box;
@@ -28,12 +31,48 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 7vmin;
+    font-family: 'Varela Round', sans-serif;
+    font-weight: 700;
+}
+    
+span {
+    font-family: 'Varela Round', sans-serif;
+    font-weight: 700;
 }
 
+.red {
+    background: -webkit-linear-gradient(#8f1126, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.blue {
+    background: -webkit-linear-gradient(#15118f, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
 #play-again {
-    margin-top: 5vmin;
+    margin-top: 3.5vmin;
+    color: white;
+    background: -webkit-linear-gradient(left, #8f1126, #15118f);
+    font-size: 1.75vmin; 
+    border-radius: 50px;
+    height: 5vmin;
+    width: 12vmin;
+    padding: 1vmin;
+    font-weight: 700;
+}
+
+#play-again:hover {
+    background: -webkit-linear-gradient(left, #8f1126, #15118f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .winner {
-    background-color: yellow;
+    text-shadow: 2px 2px 9px yellow;
+    /* box-shadow: inset 0 0 0 1000px rgba(171, 155, 15,.3); */
 }
