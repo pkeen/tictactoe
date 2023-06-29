@@ -5,6 +5,7 @@ const players = {
 }
 
 /*----- state variables -----*/
+let boardSize = 4; // hard for now
 let board;
 let gameStatus; // 1 for player 1's turn, 2 for player 2's turn, 0 for game ends in draw, -1 for player 1 wins, -2 for player 2 wins
 let winningSquares;
@@ -21,21 +22,22 @@ mainSection.prepend(gameStatusMsg);
 
 // Get indices for current column
 const colIndices = (index) => {
-    return [...Array(3).keys()].map(x => x * 3 + (index % 3));
-    }
+    return [...Array(boardSize).keys()].map(x => x * boardSize + (index % boardSize));
+}
 // Get indices for current row
 const rowIndices = (index) => {
-    return [...Array(3).keys()].map(x => x + (Math.floor(index / 3) * 3))
+    return [...Array(boardSize).keys()].map(x => x + (Math.floor(index / boardSize) * boardSize))
 }
 // get indices for diagonal Top-Left-Down    
 const diagTLDIndices = () => {
-    return [...Array(3).keys()].map(x => x * 4);
+    return [...Array(boardSize).keys()].map(x => x * (boardSize + 1 ));
 }
+  
 // get incices for diagonal Bottom-Left-Up
 const diagBLUIndices = () => {
-    return [...Array(3).keys()].map(x => x * 2 + 2);
+    return [...Array(boardSize).keys()].map(x => x * (boardSize - 1) + (boardSize -1 ));
 }
-    
+  
 // Check the values in board corresponding to the indices provided, return true if they all match 
 const lineIsWinner = (indicesToCheck, currentIndex) => {
     return board.filter((val, idx) => indicesToCheck.includes(idx))
@@ -54,13 +56,13 @@ const getWinningLine = (index) => {
     if (lineIsWinner(row, index)) return row;
     
     // Check diagonal Top-Left-Downward if meets requirements
-    if (index % 4 === 0) {
+    if (index % (boardSize + 1) === 0) {
         const diagTL = diagTLDIndices();
         if (lineIsWinner(diagTL, index)) return diagTL;
     }
     
     // Check diagonal Bottom-Left-Up if meets requirements
-    if (index % 2 === 0 && index < board.length && index > 0) {
+    if (index % (boardSize -1) === 0 && index < board.length && index > 0) {
         const diagBL = diagBLUIndices();
         if (lineIsWinner(diagBL, index)) return diagBL;
     }
@@ -147,7 +149,10 @@ const handleClick = ({target}) => {
 }
 
 const init = () => {
-    board = [null, null, null, null, null, null, null, null, null]; // Hardcoded should change
+    // initalize board with null values
+    board = [...Array(boardSize**2)].map(x => null);
+    // set grid template on board element
+    boardSection.style.gridTemplate = `repeat(${boardSize}, 10vmin) / repeat(${boardSize}, 10vmin)`;
 
     winningSquares = undefined;
     gameStatus = 1;

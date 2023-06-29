@@ -21,7 +21,7 @@ html {
 
 #board {
     display: grid;
-    grid-template: repeat(3, 10vmin) / repeat(3, 10vmin);
+    /* grid-template: repeat(3, 10vmin) / repeat(3, 10vmin); */
 }
 
 .cell {
