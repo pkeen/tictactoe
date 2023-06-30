@@ -1,20 +1,18 @@
 // whats the best way to organise my data?
 
-let currentPlayer = 1; // 1 or -1?
+// let currentPlayer = 1; // 1 or -1?
 
-let winningSquares = // array of three winning squares;
-
-
+// let winningSquares = // array of three winning squares;
 
 
 // game status object?
 
-const gameState = {
-    currentPlayer: 1;
-    board: [
-        [null, null, null]
-    ]
-}
+// const gameState = {
+//     currentPlayer: 1;
+//     board: [
+//         [null, null, null]
+//     ]
+// }
 
 /* Update game status function 
 
