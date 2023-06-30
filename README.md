@@ -18,11 +18,11 @@ I thought of two ways of doing this, one using the 2 dimensional array that was 
 
     Numbers are array indexes. 
 
-Looking at this:
-    a. We can find out the column by looking at the remainder of dividing the index by 3 
-    b. We can find out the row by dividing the index by 3 (as an integer value no decimal)
-    c. Numbers that are divisible by 4 with no remainder make up the top-left to bottom-right diagonal
-    d. Numbers that are divisible by 2 with no remainder (excluding 0) make up the bottom-left to top-right diagonal
+Looking at this we can see:
+1. We can find out the column by looking at the remainder of dividing the index by 3 
+2. We can find out the row by dividing the index by 3 (as an integer value no decimal)
+3. Numbers that are divisible by 4 with no remainder make up the top-left to bottom-right diagonal
+4. Numbers that are divisible by 2 with no remainder (excluding 0) make up the bottom-left to top-right diagonal
     
 #### To Find Current Column
 ```javascript
